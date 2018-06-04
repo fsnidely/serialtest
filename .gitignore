@@ -1,0 +1,9 @@
+__pycache__
+.hg/
+.hgignore
+.vscode/.ropeproject
+.*\.pyc
+^static/
+geckodriver.log
+tags
+db.sqlite3
