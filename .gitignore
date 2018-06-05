@@ -1,7 +1,7 @@
 __pycache__
 .hg/
 .hgignore
-.vscode/.ropeproject
+.vscode
 .*\.pyc
 ^static/
 geckodriver.log
