@@ -47,7 +47,8 @@ The following examples show the omitted natural key for Product3, whereas
 Product has been altered to ALWAYS serialize 'thing' (parent_link to Thing).
 
 Product3 has no primary key available (whether a PK or a NK) for the instances
-that use_natural_primary_keys=True.
+that use_natural_primary_keys=True. Except when use_natural_primary_keys=False
+and use_natural_foreign_keys=True, where it has an integer PK, but no NK.
 
 ::
 
