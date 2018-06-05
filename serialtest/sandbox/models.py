@@ -20,7 +20,7 @@ class KindManager(models.Manager):
 
 
 class Kind(models.Model):
-    """Kind Model is the Kind of thing like Expansion item or Store item"""
+    """Kind Model is the Kind of the Thing."""
     objects = KindManager()
 
     iden = models.CharField('Kind', max_length=8, unique=True)
@@ -68,18 +68,22 @@ class Thing(models.Model):
 
     def img_html(self):
         """Image tag for image file."""
-        return format_html(
-            '<img src="{0}" alt="{1}" title={1}>',
-            self.image.url,
-            self.name)
+        if self.image:
+            return format_html(
+                '<img src="{0}" alt="{1}" title={1}>',
+                self.image.url,
+                self.name)
+        return self.__str__()
     img_html.short_description = 'Thing'
 
     def img_name_html(self):
         """Image tag for image file."""
-        return format_html(
-            '{0} {1}',
-            self.img_html(),
-            self.name)
+        if self.image:
+            return format_html(
+                '{0} {1}',
+                self.img_html(),
+                self.name)
+        return self.__str__()
     img_name_html.short_description = 'Thing'
 
 
@@ -136,7 +140,10 @@ class Materiel(models.Model):
 
 
 class Product2(Thing):
-    """Experimental Product model extending Thing model."""
+    """Experimental Product model extending Thing model.
+
+    Simple inheritance with implied PK of 'thing_ptr'.
+    """
     prod_secs = models.IntegerField('Production seconds')
     low_level = models.IntegerField('Low-level code', default=-1)
 # # Tweak the 'thing' field's 'serialize' attribute.
@@ -144,7 +151,10 @@ class Product2(Thing):
 
 
 class Product3(Thing):
-    """Experimental Product model extending Thing model."""
+    """Experimental Product model extending Thing model.
+
+    Inheritance with a OneToOneField and parent_link=True
+    """
     thing = models.OneToOneField(
         Thing, on_delete=models.CASCADE, parent_link=True)
     prod_secs = models.IntegerField('Production seconds')
@@ -160,7 +170,12 @@ class Product4Manager(models.Manager):
 
 
 class Product4(models.Model):
-    """Old Product model."""
+    """Old Product model.
+
+    Non-inherited instance with a OneToOneField and primary_key=True
+
+    (Product4 was my original variation.)
+    """
     objects = Product4Manager()
 
     thing = models.OneToOneField(
@@ -182,3 +197,25 @@ class Product4(models.Model):
 # the 'thing' field from serialization when using
 # the natural_key().
 Product4._meta.get_field('thing').serialize = True
+
+
+class Product5(models.Model):
+    """Experimental Product model extending Thing model.
+
+    Non-inherited instance with a ForeignKeyField and primary_key=True
+    """
+    objects = Product4Manager() # Reuse from Product4 model
+
+    thing = models.ForeignKey(
+        Thing, on_delete=models.CASCADE, primary_key=True)
+    prod_secs = models.IntegerField('Production seconds')
+    low_level = models.IntegerField('Low-level code', default=-1)
+
+    def __str__(self):
+        return self.thing.name
+
+    def natural_key(self):
+        return self.thing.natural_key()
+    natural_key.dependencies = ['sandbox.thing']
+# # Tweak the 'thing' field's 'serialize' attribute.
+# Product5._meta.get_field('thing').serialize = True

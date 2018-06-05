@@ -37,11 +37,17 @@ ensure the value is set as expected.
 Some alternate variations (which do not alter the serialize attribute of the
 respective PK's):
 
-    - Product2: Simple inheiritance with implied PK of 'thing_ptr'
-    - Product3: Inheiritance with a OneToOneField and parent_link=True
+    - Product2: Simple inheritance with implied PK of 'thing_ptr'
+    - Product3: Inheritance with a OneToOneField and parent_link=True
     - Product4: Non-inherited instance with a OneToOneField and primary_key=True
 
         (Product4 was my original variation.)
+    - Product5: Non-inherited instance with a ForeignKey and primary_key=True
+
+        Notice that a ForeignKey used as the primary key also fails to serialize
+        the natural key. Of course, there is a warning that the OneToOneField is
+        better suited for the primary key. Nevertheless, it is treated like the
+        OneToOneField when serializing natural keys.
 
 
 Example:
