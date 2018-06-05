@@ -13,6 +13,10 @@ well).
     Equivalent to this unanswered stackoverflow:
     https://stackoverflow.com/questions/28702215/natural-key-serialize-django-model-with-one-to-one-field-as-primary-key
 
+Django Bug report: `Ticket #29472
+"Natural key not serializing for primary_key OneToOneField"
+<https://code.djangoproject.com/ticket/29472>`_.
+
 A work-around that will include the omitted parent_link field is to alter
 the 'serialize' attribute of the OneToOneField to True. This will always
 include the parent_link field even when the natural keys are not specified.
@@ -50,110 +54,102 @@ Product3 has no primary key available (whether a PK or a NK) for the instances
 that use_natural_primary_keys=True. Except when use_natural_primary_keys=False
 and use_natural_foreign_keys=True, where it has an integer PK, but no NK.
 
-::
 
-    2116$ pyman shell
-    Python 3.6.5 (default, Mar 29 2018, 03:28:50) 
-    [GCC 5.4.0 20160609] on linux
-    Type "help", "copyright", "credits" or "license" for more information.
-    (InteractiveConsole)
-    >>> from django.core import serializers
-    >>> from sandbox.models import Kind, Thing, Product, Product3
-    >>> kind = Kind(iden='F', name='Fruit', desc='You know ... fruit', rank=1)
-    >>> kind.save()
-    >>> thing = Thing(iden='F-A', kind=kind, name='Apple', desc='You know ... apple', rank=1)
-    >>> thing.save()
-    >>> prod = Product(thing=thing, prod_secs=42)
-    >>> prod.save_base(raw=True)
-    >>> prod.refresh_from_db()
-    >>> prod3 = Product3(thing=thing, prod_secs=42)
-    >>> prod3.save_base(raw=True)
-    >>> prod3.refresh_from_db()
-    >>> print(serializers.serialize("json", [prod, prod3], indent=4, use_natural_primary_keys=True, use_natural_foreign_keys=True))
-    [
-    {
-        "model": "sandbox.product",
-        "fields": {
-            "thing": [
-                "F-A"
-            ],
-            "prod_secs": 42,
-            "low_level": -1
-        }
-    },
-    {
-        "model": "sandbox.product3",
-        "fields": {
-            "prod_secs": 42,
-            "low_level": -1
-        }
+>>> from django.core import serializers
+>>> from sandbox.models import Kind, Thing, Product, Product3
+>>> kind = Kind(iden='F', name='Fruit', desc='You know ... fruit', rank=1)
+>>> kind.save()
+>>> thing = Thing(iden='F-A', kind=kind, name='Apple', desc='You know ... apple', rank=1)
+>>> thing.save()
+>>> prod = Product(thing=thing, prod_secs=42)
+>>> prod.save_base(raw=True)
+>>> prod.refresh_from_db()
+>>> prod3 = Product3(thing=thing, prod_secs=42)
+>>> prod3.save_base(raw=True)
+>>> prod3.refresh_from_db()
+>>> print(serializers.serialize("json", [prod, prod3], indent=4, use_natural_primary_keys=True, use_natural_foreign_keys=True))
+[
+{
+    "model": "sandbox.product",
+    "fields": {
+        "thing": [
+            "F-A"
+        ],
+        "prod_secs": 42,
+        "low_level": -1
     }
-    ]
-
-    >>> print(serializers.serialize("json", [prod, prod3], indent=4, use_natural_primary_keys=True))
-    [
-    {
-        "model": "sandbox.product",
-        "fields": {
-            "thing": 2,
-            "prod_secs": 42,
-            "low_level": -1
-        }
-    },
-    {
-        "model": "sandbox.product3",
-        "fields": {
-            "prod_secs": 42,
-            "low_level": -1
-        }
+},
+{
+    "model": "sandbox.product3",
+    "fields": {
+        "prod_secs": 42,
+        "low_level": -1
     }
-    ]
+}
+]
 
-    >>> print(serializers.serialize("json", [prod, prod3], indent=4, use_natural_foreign_keys=True))
-    [
-    {
-        "model": "sandbox.product",
-        "pk": 2,
-        "fields": {
-            "thing": [
-                "F-A"
-            ],
-            "prod_secs": 42,
-            "low_level": -1
-        }
-    },
-    {
-        "model": "sandbox.product3",
-        "pk": 2,
-        "fields": {
-            "prod_secs": 42,
-            "low_level": -1
-        }
+>>> print(serializers.serialize("json", [prod, prod3], indent=4, use_natural_primary_keys=True))
+[
+{
+    "model": "sandbox.product",
+    "fields": {
+        "thing": 2,
+        "prod_secs": 42,
+        "low_level": -1
     }
-    ]
-
-    >>> print(serializers.serialize("json", [prod, prod3], indent=4))
-    [
-    {
-        "model": "sandbox.product",
-        "pk": 2,
-        "fields": {
-            "thing": 2,
-            "prod_secs": 42,
-            "low_level": -1
-        }
-    },
-    {
-        "model": "sandbox.product3",
-        "pk": 2,
-        "fields": {
-            "prod_secs": 42,
-            "low_level": -1
-        }
+},
+{
+    "model": "sandbox.product3",
+    "fields": {
+        "prod_secs": 42,
+        "low_level": -1
     }
-    ]
+}
+]
 
-    >>> 
+>>> print(serializers.serialize("json", [prod, prod3], indent=4, use_natural_foreign_keys=True))
+[
+{
+    "model": "sandbox.product",
+    "pk": 2,
+    "fields": {
+        "thing": [
+            "F-A"
+        ],
+        "prod_secs": 42,
+        "low_level": -1
+    }
+},
+{
+    "model": "sandbox.product3",
+    "pk": 2,
+    "fields": {
+        "prod_secs": 42,
+        "low_level": -1
+    }
+}
+]
+
+>>> print(serializers.serialize("json", [prod, prod3], indent=4))
+[
+{
+    "model": "sandbox.product",
+    "pk": 2,
+    "fields": {
+        "thing": 2,
+        "prod_secs": 42,
+        "low_level": -1
+    }
+},
+{
+    "model": "sandbox.product3",
+    "pk": 2,
+    "fields": {
+        "prod_secs": 42,
+        "low_level": -1
+    }
+}
+]
 
 
 Environment:
