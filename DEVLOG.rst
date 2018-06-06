@@ -2,6 +2,12 @@ Development Log
 ===============
 
 
+2018-06-05  Added LICENSE.txt using MIT LICENSE.
+
+    `MIT License <LICENSE.txt>`_
+
+    Copyright (c) 2018 Ferd Snidely
+
 2018-06-04
 
     Added Product5 model using ForeignKey as primary key to test whether it

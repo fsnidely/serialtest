@@ -165,3 +165,11 @@ Environment:
 - Django==2.0.6
 - pylint-django==0.11.1
 - Pillow==5.1.0
+
+
+Credit:
+~~~~~~~
+
+`MIT License <LICENSE.txt>`_
+
+Copyright (c) 2018 Ferd Snidely
