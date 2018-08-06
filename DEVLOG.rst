@@ -1,6 +1,7 @@
 Development Log
 ===============
 
+2018-08-05  FIXED: Release of Django 2.1 has fixed this problem!
 
 2018-06-05  Added LICENSE.txt using MIT LICENSE.
 

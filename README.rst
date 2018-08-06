@@ -1,6 +1,12 @@
 README
 ======
 
+FIXED: Release of Django 2.1 has fixed this problem!
+
+Update: The `Ticket #29472 <https://code.djangoproject.com/ticket/29472>`_
+was marked a duplicate of 
+`#24607: Bug: Serialization (and deserialization) of MTI models doesn't work with ... (closed: fixed)
+<https://code.djangoproject.com/ticket/24607>`_.
 
 This is a sandbox for testing a serialization problem when including
 natural keys with a One-To-One linked table.
